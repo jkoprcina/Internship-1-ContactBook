@@ -95,10 +95,10 @@ namespace Internship_1_ContactBook
                         string choosingName;
                         do
                         {
-                            Console.WriteLine("Unesi hoces li traziti po imenu ili prezimenu ( upisi 'ime' ili 'prezime'");
+                            Console.WriteLine("Unesi hoces li traziti po imenu ili prezimenu ( upisi 'ime' ili 'prezime')");
                             choosingName = Console.ReadLine().ToLower();
                         } while (choosingName != "ime" && choosingName != "prezime");
-                        Console.WriteLine("Unesi koja imena treba traziti");
+                        Console.WriteLine("Unesi koja imena/prezimena treba traziti");
                         var name = Console.ReadLine();
                         AllWithCertainName(accountBook, name, choosingName);
                         break;
@@ -118,7 +118,7 @@ namespace Internship_1_ContactBook
         }
 
         //adds a new contact to the dictionary
-        static Dictionary<string, string[]> AddingANewContact(Dictionary<string, string[]> accountBook, string[] input)
+        static void AddingANewContact(Dictionary<string, string[]> accountBook, string[] input)
         {
             var number = input[3];
 
@@ -128,85 +128,75 @@ namespace Internship_1_ContactBook
             {
                 accountBook.Add(number, information);
             }
-
-            return accountBook;
         }
 
         //erases a contact from the dictionary
-        static Dictionary<string, string[]> ErasingAUser(Dictionary<string, string[]> accountBook, string number)
+        static void ErasingAUser(Dictionary<string, string[]> accountBook, string number)
         {
             accountBook.Remove(number);
-
-            return accountBook;
         }
 
         //changes something about a certain contact in the dictionary
-        static Dictionary<string, string[]> ChangingAUserInformation(Dictionary<string, string[]> accountBook, string keyword, string newInfo, string number)
+        static void ChangingAUserInformation(Dictionary<string, string[]> accountBook, string keyword, string newInfo, string number)
         {
+            string[] information = new string[4];
+
             if (keyword == "ime")
             {
                 foreach (var kvp in accountBook)
                 {
                     if (kvp.Key == number)
                     {
-                        var information = kvp.Value;
+                        information = kvp.Value;
                         information[0] = newInfo;
-                        accountBook[kvp.Key] = information;
                     }
                 }
+                accountBook[number] = information;
             }
-            if (keyword == "prezime")
+            else if (keyword == "prezime")
             {
-                foreach (var kvp in accountBook)
-                {
-                    if (kvp.Key == number)
-                    {
-                        var information = kvp.Value;
-                        information[1] = newInfo;
-                        accountBook[kvp.Key] = information;
-                    }
-                }
-            }
-            if (keyword == "adresa")
-            {
-                foreach (var kvp in accountBook)
-                {
-                    if (kvp.Key == number)
-                    {
-                        var information = kvp.Value;
-                        information[2] = newInfo;
-                        accountBook[kvp.Key] = information;
-                    }
-                }
-            }
-            if (keyword == "broj")
-            {
-                string[] information = new string[3];
-                string newNumber = "";
-
                 foreach (var kvp in accountBook)
                 {
                     if (kvp.Key == number)
                     {
                         information = kvp.Value;
-                        newNumber = kvp.Key;
+                        information[1] = newInfo;
                     }
                 }
-
-                string[] newInformation = new string[4];
-                newInformation[0] = information[0];
-                newInformation[1] = information[1];
-                newInformation[2] = information[2];
-                newInformation[3] = newNumber;
-
-                ErasingAUser(accountBook, newNumber);
-                AddingANewContact(accountBook, newInformation);
+                accountBook[number] = information;
             }
-            return accountBook;
+            else if (keyword == "adresa")
+            {
+                foreach (var kvp in accountBook)
+                {
+                    if (kvp.Key == number)
+                    {
+                        information = kvp.Value;
+                        information[2] = newInfo;
+                    }
+                }
+                accountBook[number] = information;
+            }
+            else if (keyword == "broj")
+            {
+                foreach (var kvp in accountBook)
+                {
+                    if (kvp.Key == number)
+                    {
+                        information = kvp.Value;
+                    }
+                }
+                information[3] = newInfo;
+                
+                ErasingAUser(accountBook, number);
+                AddingANewContact(accountBook, information);
+            }
+            else
+                Console.WriteLine("Taj broj ne postoji");
         }
 
         //finding a user with a specific number
-        static Dictionary<string, string[]> FindingASpecificOne(Dictionary<string, string[]> accountBook, string number)
+        static void FindingASpecificOne(Dictionary<string, string[]> accountBook, string number)
         {
             foreach (var i in accountBook)
             {
@@ -215,11 +205,10 @@ namespace Internship_1_ContactBook
                 if(i.Key == number)
                     Console.WriteLine("Broj {0} Osobe {1} {2} {3}", i.Key, info[0], info[1], info[2]); 
             }
-            return accountBook;
         }
 
         //finding everyone who's name or last name starts with a certain string
-        static Dictionary<string, string[]> AllWithCertainName(Dictionary<string, string[]> accountBook, string name, string choosing)
+        static void AllWithCertainName(Dictionary<string, string[]> accountBook, string name, string choosing)
         {
             var listOfNumbers = new List<string>();
             var lenght = name.Length;
@@ -243,15 +232,17 @@ namespace Internship_1_ContactBook
                 {
                     string[] info = i.Value;
                     string checking = "";
-                    for (int j = 0; j < lenght; j++)
+                    if (info[1].Length >= lenght)
                     {
-                        checking += info[1][j];
+                        for (int j = 0; j < lenght; j++)
+                        {
+                            checking += info[1][j];
+                        }
+                        if (checking == name)
+                            Console.WriteLine("Broj {0} Osobe {1} {2} {3}", i.Key, info[0], info[1], info[2]);
                     }
-                    if (checking == name)
-                        Console.WriteLine("Broj {0} Osobe {1} {2} {3}", i.Key, info[0], info[1], info[2]);
                 }
             }
-            return accountBook;
         }
         
     }
